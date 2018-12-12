@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Адміністратор: Readabook - електронна бібліотека</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+      a.rollover {
+       background: url(images/readbutton.png); 
+       display: block; 
+       width: 140px; 
+       height: 40px; 
+      }
+      a.rollover:hover {
+       background-position: 0 -40px; 
+      }
+
+      .pagination a {
+        border-radius: 5px;
+      }
+
+      .pagination a.active {
+        border-radius: 5px;
+      }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container" id="securedContent" style="margin-top:50px">
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container-fluid">
+         <div class="navbar-header">
+    
+    
+           <a class="navbar-brand" href="admin.html">Readabook</a>
+         </div>
+         <ul class="nav navbar-nav">
+           <li class="active"><a href="#">v 0.01 beta</a></li>
+
+                    <form class="navbar-form navbar-left" action="/">
+           <div class="form-group">
+             <input type="text" class="form-control" id="searchInput" placeholder="Пошук" name="search" style="width: 300px">
+                   <i class="glyphicon glyphicon-search"></i>
+
+           </div>
+         </form>
+           <li class="dropdown">
+             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Додати книгу
+             <span class="caret"></span></a>
+             <ul class="dropdown-menu" style="width: 400px">
+
+                 <form id="addBookForm" style="margin: 5%">
+                 <span id="errorMessage" style="color: red;"></span>
+                 <div class="form-group">
+                     <label>Назва твору:</label>
+                     <input type="text" class="form-control" id="bookName" placeholder="Назва книги">
+                 </div>
+
+                 <div class="form-group">
+                     <label>Автор:</label>
+                     <input type="text" class="form-control" id="bookAuthor" placeholder="Прізвище та ініціали автора">
+                 </div>
+
+                 <div class="form-group">
+                     <label>Анотація:</label>
+                     <textarea rows="4" class="form-control" id="bookAnnotation" placeholder="Опис/анотація книги"></textarea>
+                 </div> 
+
+                 <div class="form-group">
+                     <label>Посилання:</label>
+                     <input type="text" class="form-control" id="bookLink" placeholder="Пряме посилання на книгу">
+                 </div>
+
+                 <div class="form-group">
+                     <label>Жанр:</label>
+                    <select class="form-control" id="categoryid">
+                       <option>Детектив</option>
+                       <option>Триллер/жахи</option>                       
+                       <option>Класика</option>
+                       <option>Історичні</option>
+                       <option>Фантастика/Фентезі</option>
+                       <option>Роман</option>
+                       <option>Підліткові</option>
+                       <option>Інші</option>
+                    </select>
+                 </div>
+
+                 <div class="form-group">
+                     <label>Мова:</label>
+                    <select class="form-control" id="langid">
+                       <option>Українська</option>
+                       <option>Російська</option>
+                       <option>Англійська</option>
+                       <option>Інша</option>
+                    </select>
+
+                 <br>
+                 <button class="btn btn-success btn-block" type="submit">Додати книгу</button>
+             </form>
+               </div>
+             </ul>
+           </li>
+           <li><a href="index.html">Проглянути як користувач</a></li>
+         </ul>
+         <ul class="nav navbar-nav navbar-right">
+           <li><a><span class="glyphicon glyphicon-log-out" id="logoutBtn"></span> Вийти</a></li>
+         </ul>
+    
+
+    
+       </div>
+     </nav>
+
+        <table class="table table-striped" id="booksTable">
+            <tbody></tbody>
+        </table>
+
+        <nav aria-label="Page navigation ">
+          <ul class="pagination justify-content-end">
+            <li class="page-item" id="paginBack"><a class="page-link" href="#"><< Назад</a></li>
+            <li class="page-item" id="paginForw"><a class="page-link" href="#">Вперед >></a></li>
+          </ul>
+        </nav>
+
+
+      
+    </div>
+
+    </div>
+
+          <div class="navbar navbar-inverse navbar-bottom">
+          <p class="navbar-text pull-right">© 2018 Pavlo Yurkiv</p>
+          </div>
+      
+    </div>
+
+
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script> 
+    <script src="public/js/global.js"></script>
+    <script>
+        var currentPage = 0;
+        var searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+        var tableempty = false;
+
+        $(document).ready(function () {
+
+
+            if (token) {
+
+                $.ajaxSetup({
+                    headers : {
+                        'Authorization' : 'Bearer ' + token
+                    }
+                })
+
+                getBooks();
+                searchResult();
+
+                $('#bookName').keyup(function(e) {
+                    let text = $('#bookName').val();
+                    
+                    if(text.length >= 3) {
+                        console.log(text);
+                    checkBookName(text);
+                    }
+
+                });
+
+                $('#addBookForm').submit(function(e) {
+                    e.preventDefault();
+                    addBook();
+                });
+
+                $(document).on('click', '#booksTable tbody button', function(e) {
+                    console.log(e.target.id);
+
+                    var r = confirm("Ви дійсно хочете видалити цей запис?");
+                    if (r == true) {
+                        let bookId = e.target.id.split('-')[1];
+                        deleteBook(bookId);
+                    } 
+                });
+
+                $(document).on('change', '#booksTable tbody input', function(e) {
+                let elementId = e.target.id;
+                console.log(elementId);
+                let bookId = elementId.split('-')[1];
+                console.log(bookId);
+                uploadFile(bookId);
+                });
+
+                $('#logoutBtn').on('click', function(e) {
+                    window.localStorage.removeItem('auth_token');
+                    window.location.reload();
+                });
+                
+
+
+                $('#paginBack').on('click', function(e) {
+                    let oldcp = currentPage;
+                    currentPage = oldcp - 1;
+                    if (currentPage >= 0) {  
+                    searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                    getBooks();
+                    } else currentPage = oldcp;
+
+                });
+
+                $('#paginForw').on('click', function(e) {
+                    tableEmptyCheck();
+                    let oldcp = currentPage;
+                    currentPage = oldcp + 1;
+
+                    if(tableempty == false) {
+                    searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                    getBooks();
+                    tableEmptyCheck();
+
+                    } else { 
+                        currentPage = oldcp - 1; 
+                        searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                        getBooks();
+                        tableempty = false; 
+                    }
+
+                });
+
+
+
+
+
+            } else {
+                $('#securedContent').hide();
+                window.location.href = 'signin.html';
+            }
+
+            let role = parseJwt(token).auth;
+                        console.log(role);
+
+            if (role != 'ROLE_ADMIN') {
+
+                window.location.href = 'index.html';
+            }
+
+        });
+
+        function tableEmptyCheck() {
+
+                $('#booksTable').each(function() {
+                    if( $.trim($(this).text()) == "" ){
+                       tableempty = true;
+                    }
+                });
+        }
+
+        function uploadFile(bookId) {
+            let formData = new FormData();
+            formData.append('file', $('#image-' + bookId)[0].files[0]);
+
+            $.ajax({
+                url: SERVER_URL + 'books/' + bookId + '/image',
+                method: 'POST',
+                contentType: false,
+                processData: false,
+                data: formData,
+                complete: function(res) {
+                    if (res.status == 202) {
+                        $('#booksTable tbody').empty();
+                        getBooks();
+                    }
+                }
+            })
+
+        }
+
+        function deleteBook(bookId) {
+            $.ajax({
+                url: SERVER_URL + 'books/' + bookId,
+                method: 'DELETE',
+                dataType: 'json',
+                contentType: 'application/json',
+                complete: function(res) {
+                    if (res.status == 200) {
+                        $('#booksTable tbody').empty();
+                        getBooks();
+                    }
+                }
+            })
+        }
+
+        function checkBookName(name) {
+            $.ajax({
+                url: SERVER_URL + 'books/check?name=' + name,
+                method: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                complete: function(res) {
+                    console.log(res);
+ 
+                    if (res.responseJSON === true) {
+                        $('#errorMessage').show();
+                        $('#errorMessage').html('Book with typed name exists');
+                        $('#addBookForm button').attr("disabled", "disabled");
+                   } else {
+                        $('#errorMessage').hide();
+                        $('#addBookForm button').attr("disabled", false);
+                   }
+                }
+            })
+        }
+
+        function addBook() {
+            var op;
+            var la;
+                if($('#categoryid').val() === 'Детектив') { 
+                        op = 1
+                }else 
+                if($('#categoryid').val() === 'Триллер/жахи') { 
+                        op = 2
+                }else 
+                if($('#categoryid').val() === 'Класика') { 
+                        op = 3
+                }else 
+                if($('#categoryid').val() === 'Історичні') { 
+                        op = 4
+                }else 
+                if($('#categoryid').val() === 'Фантастика/Фентезі') { 
+                        op = 5
+                }else 
+                if($('#categoryid').val() === 'Роман') { 
+                        op = 6
+                }else                                                                                           
+                if($('#categoryid').val() === 'Підліткові') { 
+                        op = 7
+                } else 
+                        op = 8
+
+
+
+
+                if($('#langid').val() === 'Українська') { 
+                        la = 1
+                } else
+                if($('#langid').val() === 'Російська') { 
+                        la = 2
+                } else
+                if($('#langid').val() === 'Англійська') { 
+                        la = 3
+                } 
+                else 
+                        la = 4
+
+            let book = {
+                name: $('#bookName').val(),
+                author: $('#bookAuthor').val(),
+                annotation: $('#bookAnnotation').val(),
+                link: $('#bookLink').val(),
+                category: {
+                      id: op
+                },
+                lang: {
+                      id: la
+                }
+            }
+
+            $.ajax({
+                url: SERVER_URL + 'books',
+                method: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(book),
+                complete: function(res) {
+                    console.log(res);
+
+                    if (res.status == 201) {
+                        alert('Book added to DataBase');
+
+                        $('#booksTable tbody').empty();
+                        getBooks();
+                        $('#addBookForm')[0].reset();
+                    }
+
+                    if (res.status == 409) {
+                        $('#errorMessage').html(res.responseJSON.message);
+                    }
+                }
+            })
+        }
+
+
+        function getBooks() {
+      let imgUrl = SERVER_URL + 'books/image?fileName=';
+
+            $.ajax({
+                url: searchlink,
+                method: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                complete: function (response) {
+                    $('#booksTable tbody').empty();
+                    $.each(response.responseJSON, function(key, value) {
+                        $('#booksTable tbody').append(
+                            `
+
+                                <tr>
+                                    <td rowspan="6"><div><img src="${value.image !== null ? (imgUrl + value.image) : ''}" width="250px"> <br> 
+                                        <center><input type="file" class="form-control" id="image-${value.id}"><br></center> 
+                                        <center>  
+                                        <a href="${value.link}" class="rollover"></a><br></center>
+                                        <center><button class="btn btn-danger btn-sm btn-lg" id="btn-${value.id}">Видалити</button></center></td>
+                                    <td>Назва твору:</td>
+                                    <td>${value.name}</td>
+                                </tr>
+                                <tr>
+                                    <td>Автор:</td>
+                                    <td>${value.author}</td>
+                                </tr>
+                                <tr>
+                                    <td>Жанр:</td>
+                                    <td>${value.category.name}</td>
+                                </tr>
+                                <tr>
+                                    <td>Мова:</td>
+                                    <td>${value.lang.name}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Анотація:</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">${value.annotation}</td>
+                                </tr>
+
+                            `
+                        );
+                    });
+                }
+            });
+
+        }
+
+
+        function searchResult() {
+           $("#searchInput").on("keyup", function() {
+
+                let value = $(this).val().toLowerCase();
+                if(value == "") {
+                    location.reload();
+                }
+                searchlink = SERVER_URL  + 'books/search?name=' + value +'&sort=name,ASC';
+                getBooks();
+           });
+        }
+        
+
+
+    </script>
+</body>
+
+</html>

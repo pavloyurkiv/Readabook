@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Readabook - електронна бібліотека</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <style>
+      a.rollover {
+       background: url(images/readbutton.png); 
+       display: block; 
+       width: 140px; 
+       height: 40px; 
+      }
+      a.rollover:hover {
+       background-position: 0 -40px; 
+      }
+
+      .pagination a {
+        border-radius: 5px;
+      }
+
+      .pagination a.active {
+        border-radius: 5px;
+      }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container" id="securedContent" style="margin-top:50px">
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container-fluid">
+         <div class="navbar-header">
+    
+    
+           <a class="navbar-brand" href="admin.html">Readabook</a>
+         </div>
+         <ul class="nav navbar-nav">
+           <li class="active"><a href="index.html">v 0.01 beta</a></li>
+         </ul>
+         <ul class="nav navbar-nav navbar-right">
+           <li><a><span class="glyphicon glyphicon-log-out" id="logoutBtn"></span> Вийти</a></li>
+         </ul>
+    
+         <form class="navbar-form navbar-left" action="/">
+           <div class="form-group">
+             <input type="text" class="form-control" id="searchInput" placeholder="Пошук" name="search" style="width: 300px">
+                   <i class="glyphicon glyphicon-search"></i>
+
+           </div>
+         </form>
+    
+       </div>
+     </nav>
+
+        <table class="table table-striped" id="booksTable">
+            <tbody></tbody>
+        </table>
+
+        <nav aria-label="Page navigation ">
+          <ul class="pagination justify-content-end">
+            <li class="page-item" id="paginBack"><a class="page-link" href="#"><< Назад</a></li>
+            <li class="page-item" id="paginForw"><a class="page-link" href="#">Вперед >></a></li>
+          </ul>
+        </nav>
+
+
+      
+    </div>
+
+    </div>
+
+      <div class="navbar navbar-inverse navbar-bottom">
+    <div class="container">
+      <p class="navbar-text pull-right">© 2018 Pavlo Yurkiv</p>
+          </div>
+
+    </div>
+
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script> 
+    <script src="public/js/global.js"></script>
+    <script>
+        var currentPage = 0;
+        var searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+        var tableempty = false;
+
+        $(document).ready(function () {
+
+
+            if (token) {
+
+                $.ajaxSetup({
+                    headers : {
+                        'Authorization' : 'Bearer ' + token
+                    }
+                })
+
+                getBooks();
+                searchResult();
+
+                $('#bookName').keyup(function(e) {
+                    let text = $('#bookName').val();
+                    
+                    if(text.length >= 3) {
+                        console.log(text);
+                    checkBookName(text);
+                    }
+
+                });
+
+
+                $(document).on('change', '#booksTable tbody input', function(e) {
+                let elementId = e.target.id;
+                console.log(elementId);
+                let bookId = elementId.split('-')[1];
+                console.log(bookId);
+                uploadFile(bookId);
+                });
+
+                $('#logoutBtn').on('click', function(e) {
+                    window.localStorage.removeItem('auth_token');
+                    window.location.reload();
+                });
+                
+
+
+                $('#paginBack').on('click', function(e) {
+                    let oldcp = currentPage;
+                    currentPage = oldcp - 1;
+                    if (currentPage >= 0) {  
+                    searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                    getBooks();
+                    } else currentPage = oldcp;
+
+                });
+
+                $('#paginForw').on('click', function(e) {
+                    tableEmptyCheck();
+                    let oldcp = currentPage;
+                    currentPage = oldcp + 1;
+
+                    if(tableempty == false) {
+                    searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                    getBooks();
+                    tableEmptyCheck();
+
+                    } else { 
+                        currentPage = oldcp - 1; 
+                        searchlink = SERVER_URL + 'books/pages?page=' + currentPage + '&size=5' + '&sort=name,ASC';
+                        getBooks();
+                        tableempty = false; 
+                    }
+
+                });
+
+
+
+
+            } else {
+                $('#securedContent').hide();
+                window.location.href = 'signin.html';
+            }
+
+            let role = parseJwt(token).auth;
+                        console.log(role);
+
+        });
+
+        function tableEmptyCheck() {
+
+                $('#booksTable').each(function() {
+                    if( $.trim($(this).text()) == "" ){
+                       tableempty = true;
+                    }
+                });
+        }
+
+
+
+
+        function getBooks() {
+      let imgUrl = SERVER_URL + 'books/image?fileName=';
+
+            $.ajax({
+                url: searchlink,
+                method: 'GET',
+                dataType: 'json',
+                contentType: 'application/json',
+                complete: function (response) {
+                    $('#booksTable tbody').empty();
+                    $.each(response.responseJSON, function(key, value) {
+                        $('#booksTable tbody').append(
+                            `
+
+                                <tr>
+                                    <td rowspan="6"><div><img src="${value.image !== null ? (imgUrl + value.image) : ''}" width="250px"> 
+                                    <br><br> 
+                                        <center><a href="${value.link}" class="rollover"></a><br></center>
+                                    </td>
+                                    <td>Назва твору:</td>
+                                    <td>${value.name}</td>
+                                </tr>
+                                <tr>
+                                    <td>Автор:</td>
+                                    <td>${value.author}</td>
+                                </tr>
+                                <tr>
+                                    <td>Жанр:</td>
+                                    <td>${value.category.name}</td>
+                                </tr>
+                                <tr>
+                                    <td>Мова:</td>
+                                    <td>${value.lang.name}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Анотація:</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">${value.annotation}</td>
+                                </tr>
+
+                            `
+                        );
+                    });
+                }
+            });
+
+        }
+
+
+        function searchResult() {
+           $("#searchInput").on("keyup", function() {
+
+                let value = $(this).val().toLowerCase();
+                if(value == "") {
+                    location.reload();
+                }
+                searchlink = SERVER_URL  + 'books/search?name=' + value;
+                getBooks();
+           });
+        }
+
+    </script>
+</body>
+
+</html>

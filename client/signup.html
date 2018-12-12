@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <title>Реєстрація: Readabook - електронна бібліотека</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+    <style>
+        
+        body, html {
+    height: 100%;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(#24a647, #212121);
+}
+
+.card-container.card {
+    max-width: 350px;
+    padding: 40px 40px;
+}
+
+.btn {
+    font-weight: 700;
+    height: 36px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+
+.card {
+    background-color: #F7F7F7;
+    padding: 20px 25px 30px;
+    margin: 0 auto 25px;
+    margin-top: 50px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.profile-img-card {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+
+
+.profile-name-card {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0 0;
+    min-height: 1em;
+}
+
+.reauth-email {
+    display: block;
+    color: #404040;
+    line-height: 2;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.form-signin #inputEmail,
+.form-signin #inputPassword {
+    direction: ltr;
+    height: 44px;
+    font-size: 16px;
+}
+
+.form-signin input[type=email],
+.form-signin input[type=password],
+.form-signin input[type=text],
+.form-signin button {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    z-index: 1;
+    position: relative;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.form-signin .form-control:focus {
+    border-color: rgb(104, 145, 162);
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+}
+
+.btn.btn-signin {
+    background-color: rgb(104, 145, 162);
+    padding: 0px;
+    font-weight: 700;
+    font-size: 14px;
+    height: 36px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: none;
+    -o-transition: all 0.218s;
+    -moz-transition: all 0.218s;
+    -webkit-transition: all 0.218s;
+    transition: all 0.218s;
+}
+
+.btn.btn-signin:hover,
+.btn.btn-signin:active,
+.btn.btn-signin:focus {
+    background-color: rgb(12, 97, 33);
+}
+
+.forgot-password {
+    color: rgb(104, 145, 162);
+}
+
+.forgot-password:hover,
+.forgot-password:active,
+.forgot-password:focus{
+    color: rgb(12, 97, 33);
+}
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+<nav class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container-fluid">
+         <div class="navbar-header">
+           <a class="navbar-brand" href="admin.html">Readabook</a>
+         </div>
+         <ul class="nav navbar-nav">
+           <li class="active"><a href="index.html">v 0.01 beta</a></li>
+
+         <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Інформація
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu  card">
+                <div style="width: 400px">
+                     <div style="margin: 10px"><center><img src="images/antilogo.png"></center><br>
+                        <p style="text-align: justify;">Readabook - це бета-версія перспективної електронної бібліотеки, у якій планується зібрати якнайбільше матеріалів для тих, хто любить читати, проте не має місця для громіздких шкафчиків, доверху наповнених книжками. Художні твори і навчальні матеріали зібрані лише в одному місці!<p></div>
+                </div>
+            </ul>
+        </li>
+
+         </ul>
+         <ul class="nav navbar-nav navbar-right">
+           <li><a href="signin.html"><span class="glyphicon glyphicon-log-in"></span> Авторизація</a></li>
+         </ul>
+    
+         <form class="navbar-form navbar-left" action="/">
+
+         </form>
+    
+       </div>
+     </nav>
+
+
+
+        <div class="card card-container">
+            <img id="profile-img" class="profile-img-card" src="images/avatar.png" />
+            <p id="profile-name" class="profile-name-card"></p>
+            <form class="form-signin" id="signupForm">
+                <div class="form-group">
+                <label>Логін</label>
+                <input type="text" class="form-control" id="username" placeholder="Введіть логін">
+            </div>
+
+            <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" class="form-control" id="password" placeholder="Введіть пароль">
+            </div>
+
+                <div id="remember" class="checkbox">
+                    <label>
+                        <input type="checkbox" value="remember-me"> Запам'ятати мене
+                    </label>
+                </div>
+                <button class="btn btn-success btn-block" type="submit" type="submit">Реєстрація</button>
+            </form>
+        </div>
+    </div>  
+          <div class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container">
+      <p class="navbar-text pull-right">© 2018 Pavlo Yurkiv</p>
+          </div>
+    </div>  
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script> 
+    <script src="public/js/jquery.min.js"></script>
+    <script>
+        const SERVER_URL = 'http://localhost:8080/auth/signup';
+
+        $(document).ready(function() {
+            $('#signupForm').submit(function(e) {
+                e.preventDefault();
+                signup();
+            });
+        });
+
+        function signup() {
+            let user = {
+                username: $('#username').val(),
+                password: $('#password').val()
+            };
+
+            $.ajax({
+                url: SERVER_URL,
+                method: 'POST',
+                data: JSON.stringify(user),
+                contentType: 'application/json',
+                dataType: 'json',
+                complete: function(res) {
+                    if(res.status === 201) {
+                        alert('Registration complete!');
+                        window.location.href = 'signin.html';
+                    }
+                }
+            })
+
+        }
+
+    </script>
+</body>
+</html>

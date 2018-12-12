@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="public/css/bootstrap.min.css" rel="stylesheet">
+    <title>Readabook - електронна бібліотека</title>
+    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+<style>
+
+.card {
+    background-color: #F7F7F7;
+    padding: 20px 25px 30px;
+    margin: 0 auto 25px;
+    margin-top: 50px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+    
+.profile-img-card {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+
+
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+.carousel-fade .carousel-inner .item {
+    opacity: 0;
+    transition-property: opacity;
+}
+.carousel-fade .carousel-inner .active {
+    opacity: 1;
+}
+.carousel-fade .carousel-inner .active.left,
+.carousel-fade .carousel-inner .active.right {
+    left: 0;
+    opacity: 0;
+    z-index: 1;
+}
+.carousel-fade .carousel-inner .next.left,
+.carousel-fade .carousel-inner .prev.right {
+    opacity: 1;
+}
+.carousel-fade .carousel-control {
+    z-index: 2;
+}
+@media all and (transform-3d),
+(-webkit-transform-3d) {
+    .carousel-fade .carousel-inner > .item.next,
+    .carousel-fade .carousel-inner > .item.active.right {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.prev,
+    .carousel-fade .carousel-inner > .item.active.left {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+    .carousel-fade .carousel-inner > .item.next.left,
+    .carousel-fade .carousel-inner > .item.prev.right,
+    .carousel-fade .carousel-inner > .item.active {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+.item:nth-child(1) {
+    background: url(images/background1.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(2) {
+    background: url(images/background2.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.item:nth-child(3) {
+    background: url(images/background3.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.carousel {
+    z-index: -99;
+}
+.carousel .item {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+}
+
+</style>
+
+</head>
+<body>
+
+    
+    
+    <div class="container">
+<div class="carousel slide carousel-fade" data-ride="carousel">
+
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+        </div>
+        <div class="item">
+        </div>
+        <div class="item">
+        </div>
+    </div>
+</div>
+
+
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+       <div class="container-fluid">
+         <div class="navbar-header">
+           <a class="navbar-brand" href="admin.html">Readabook</a>
+         </div>
+         <ul class="nav navbar-nav">
+           <li class="active"><a href="index.html">v 0.01 beta</a></li>
+
+         <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Інформація
+            <span class="caret"></span></a>
+            <ul class="dropdown-menu  card">
+                <div style="width: 400px">
+                     <div style="margin: 10px">
+                        <center><img src="images/antilogo.png"></center><br>
+                        <p style="text-align: justify;">Readabook - це бета-версія перспективної електронної бібліотеки, у якій планується зібрати якнайбільше матеріалів для тих, хто любить читати, проте не має місця для громіздких шкафчиків, доверху наповнених книжками. Художні твори і навчальні матеріали зібрані лише в одному місці!<p></div>
+                </div>
+            </ul>
+        </li>
+
+         </ul>
+         <ul class="nav navbar-nav navbar-right">
+           <li class="dropdown dropdown-right">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Авторизація
+            <span class="glyphicon glyphicon-log-in"></span></a>
+            <ul class="dropdown-menu card">
+                <div style="width: 300px">
+                     <div class="" style="margin: 10px">
+                        <img id="profile-img" class="profile-img-card" src="images/avatar.png" />
+                        <form id="signinForm">
+                         <div class="form-group">
+                          <label>Логін</label>
+                          <input type="text" class="form-control" id="username" placeholder="Введіть логін">
+                         </div>
+
+                         <div class="form-group">
+                           <label>Пароль</label>
+                           <input type="password" class="form-control" id="password" placeholder="Введіть пароль">
+                         </div>
+
+                          <button class="btn btn-success btn-block" type="submit">Увійти</button>
+                        </form>           
+                     </div>
+                </div>
+            </ul>
+        </li>
+         </ul>
+
+         <ul class="nav navbar-nav navbar-right">
+           <li><a href="signup.html"><span class="glyphicon glyphicon-user"></span> Реєстрація</a></li>
+         </ul>
+    
+         <form class="navbar-form navbar-left" action="/">
+
+         </form>
+    
+       </div>
+     </nav>
+
+
+
+    </div>
+      <div class="navbar navbar-inverse navbar-fixed-bottom">
+    <div class="container">
+      <p class="navbar-text pull-right">© 2018 Pavlo Yurkiv</p>
+          </div>
+    </div>
+
+    <script src="public/js/jquery.min.js"></script>
+    <script src="public/js/bootstrap.min.js"></script> 
+    <script src="public/js/global.js"></script>
+    <script>
+        SERVER_URL += 'auth/signin';
+
+        $(document).ready(function() {
+            $('.carousel').carousel();
+            $('#signinForm').submit(function(e) {
+                e.preventDefault();
+                signin();
+            });
+        });
+
+        function signin() {
+            let user = {
+                username: $('#username').val(),
+                password: $('#password').val()
+            };
+
+            $.ajax({
+                url: SERVER_URL,
+                method: 'POST',
+                data: JSON.stringify(user),
+                contentType: 'application/json',
+                dataType: 'json',
+                complete: function(res) {
+                    if (res.status == 200) {
+                        let token = res.responseJSON.token;
+                        window.localStorage.setItem('auth_token', token);
+
+                        let role = parseJwt(token).auth;
+                        console.log(role);
+
+                        if (role === 'ROLE_USER') {
+                            alert('Ви зайшли як: Користувач');
+                            window.location.href = 'index.html';
+                        } else if (role === 'ROLE_ADMIN') {
+                            alert('Ви зайшли як: Адміністратор');
+                            window.location.href = 'admin.html';
+                        }
+                    }
+                }
+            })
+
+        }
+    </script>
+</body>
+</html>
